@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Adiaha's Research Guide — Technology has made us isolated</title>
+<style>
+  :root {
+    --gold: #c8a84b; --gold-light: #f0dfa0; --gold-pale: #fdf8ec;
+    --teal: #1a7a6e; --teal-light: #d0ede9;
+    --bg: #fafaf8; --surface: #ffffff; --border: #e8e4dc;
+    --text: #1c1c1a; --muted: #6b6860; --hint: #9b9790;
+    --success: #2a7a4e; --danger: #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .topbar { background: var(--teal); color: white; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+  .topbar-title { font-size: 15px; font-weight: normal; letter-spacing: 0.04em; }
+  .topbar-title span { opacity: 0.7; font-size: 13px; margin-left: 10px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .autosave-indicator { font-size: 12px; font-family: 'Arial', sans-serif; opacity: 0.8; min-width: 70px; text-align: right; }
+  .btn-icon { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: 'Georgia', serif; transition: background 0.15s; }
+  .btn-icon:hover { background: rgba(255,255,255,0.25); }
+  .container { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+  .hero { text-align: center; margin-bottom: 2.5rem; padding: 2rem 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .hero-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .hero h1 { font-size: 26px; font-weight: normal; color: var(--text); line-height: 1.35; margin-bottom: 8px; }
+  .hero h1 em { color: var(--teal); font-style: normal; }
+  .hero-sub { font-size: 14px; color: var(--muted); font-family: 'Arial', sans-serif; }
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 2rem; }
+  .tab { padding: 10px 18px; font-size: 13px; font-family: 'Arial', sans-serif; color: var(--muted); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: bold; }
+  .section-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 2rem 0 1rem; padding-bottom: 6px; border-bottom: 1px solid var(--gold-light); }
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+  .q-type { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); font-family: 'Arial', sans-serif; font-weight: bold; }
+  .q-badge { font-size: 11px; background: var(--teal-light); color: var(--teal); padding: 2px 10px; border-radius: 20px; font-family: 'Arial', sans-serif; }
+  .q-text { font-size: 16px; line-height: 1.55; color: var(--text); margin-bottom: 8px; }
+  .q-hint { font-size: 13px; color: var(--hint); font-family: 'Arial', sans-serif; line-height: 1.6; margin-bottom: 12px; padding-left: 10px; border-left: 2px solid var(--gold-light); }
+  textarea.q-answer { width: 100%; min-height: 90px; resize: vertical; padding: 10px 12px; font-size: 14px; line-height: 1.65; font-family: 'Arial', sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; transition: border-color 0.15s; outline: none; }
+  textarea.q-answer:focus { border-color: var(--teal); background: #fff; }
+  .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 5px; margin-bottom: 6px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--teal); border-radius: 4px; transition: width 0.3s; width: 0%; }
+  .progress-label { font-size: 12px; font-family: 'Arial', sans-serif; color: var(--muted); margin-bottom: 1.5rem; }
+  /* EXAMPLES */
+  .ex-section { margin-bottom: 2.5rem; }
+  .ex-section-title { font-size: 20px; font-weight: normal; color: var(--text); margin-bottom: 4px; }
+  .ex-word { color: var(--teal); font-size: 24px; }
+  .ex-section-desc { font-size: 14px; color: var(--muted); font-family: 'Arial', sans-serif; margin-bottom: 1.25rem; line-height: 1.65; border-left: 3px solid var(--gold-light); padding-left: 12px; }
+  .ex-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.4rem; margin-bottom: 1rem; }
+  .ex-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); font-family: 'Arial', sans-serif; font-weight: bold; margin-bottom: 8px; }
+  .ex-text { font-size: 15px; line-height: 1.7; color: var(--text); font-style: italic; }
+  .ex-text strong { font-style: normal; color: var(--teal); }
+  .ex-why { font-size: 12px; color: var(--hint); font-family: 'Arial', sans-serif; margin-top: 10px; line-height: 1.55; padding-top: 8px; border-top: 1px solid var(--border); }
+  .ex-divider { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+  /* STRATEGY */
+  .strategy-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .strategy-card h3 { font-size: 15px; font-weight: normal; color: var(--teal); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .phase-pill { font-size: 10px; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: 0.08em; text-transform: uppercase; background: var(--teal-light); color: var(--teal); padding: 2px 10px; border-radius: 20px; }
+  .strategy-card p, .strategy-card li { font-size: 14px; font-family: 'Arial', sans-serif; color: var(--muted); line-height: 1.75; }
+  .strategy-card ul, .strategy-card ol { padding-left: 1.3rem; margin-top: 6px; }
+  .strategy-card li { margin-bottom: 5px; }
+  .strategy-card strong { color: var(--text); }
+  /* SETTINGS */
+  .settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; display: none; }
+  .settings-overlay.open { display: block; }
+  .settings-panel { position: fixed; top: 0; right: -420px; width: 380px; height: 100vh; background: white; border-left: 1px solid var(--border); padding: 2rem 1.5rem; z-index: 200; transition: right 0.3s ease; overflow-y: auto; }
+  .settings-panel.open { right: 0; }
+  .settings-title { font-size: 16px; margin-bottom: 1.5rem; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
+  .settings-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); line-height: 1; }
+  .field-group { margin-bottom: 1.25rem; }
+  .field-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-family: 'Arial', sans-serif; font-weight: bold; display: block; margin-bottom: 6px; }
+  .field-input { width: 100%; padding: 9px 12px; font-size: 13px; font-family: monospace; border: 1px solid var(--border); border-radius: 6px; color: var(--text); background: var(--bg); outline: none; }
+  .field-input:focus { border-color: var(--teal); }
+  .field-hint { font-size: 12px; color: var(--hint); font-family: 'Arial', sans-serif; margin-top: 5px; line-height: 1.5; }
+  .settings-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .btn-settings-action { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; font-family: 'Arial', sans-serif; cursor: pointer; transition: all 0.15s; }
+  .btn-settings-action:hover { border-color: var(--teal); color: var(--teal); }
+  .btn-settings-action.primary { background: var(--teal); color: white; border-color: var(--teal); }
+  .btn-settings-action.primary:hover { background: #145f55; }
+  #settings-status { font-size: 12px; font-family: 'Arial', sans-serif; margin-top: 10px; line-height: 1.6; min-height: 40px; color: var(--muted); white-space: pre-wrap; }
+  #settings-status.ok { color: var(--success); }
+  #settings-status.err { color: var(--danger); }
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: white; font-size: 13px; font-family: 'Arial', sans-serif; padding: 9px 20px; border-radius: 20px; display: none; z-index: 999; white-space: nowrap; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Adiaha's Research Guide <span>Technology has made us isolated</span></div>
+  <div class="topbar-right">
+    <div class="autosave-indicator" id="autosave-indicator"></div>
+    <button class="btn-icon" onclick="openSettings()">&#9881; Settings</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-label">Presentation Research Guide</div>
+    <h1>Technology has made us <em>isolated</em></h1>
+    <div class="hero-sub">Read the examples first. Then answer each question in your own words. Your answers save automatically as you type.</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" onclick="switchTab('examples', this)">Examples</button>
+    <button class="tab active" onclick="switchTab('research', this)">My Answers</button>
+    <button class="tab" onclick="switchTab('strategy', this)">Memory Strategy</button>
+  </div>
+
+  <!-- EXAMPLES PANE -->
+  <div id="pane-examples" class="pane">
+
+    <div class="ex-section">
+      <div class="ex-section-title"><span class="ex-word">Hook</span> &mdash; Grab their attention</div>
+      <div class="ex-section-desc">The hook is the very first thing you say. It should make the audience stop, think, and lean forward. A great hook asks a question, paints a picture, or says something surprising. You have about 10 seconds to win them over.</div>
+
+      <div class="ex-card">
+        <div class="ex-label">The question hook</div>
+        <div class="ex-text">"Raise your hand if you've ever been sitting right next to someone &mdash; maybe a friend, a parent, even a brother or sister &mdash; and they didn't even notice you were there. Because they were on their phone."</div>
+        <div class="ex-why">Why it works: hands go up, people laugh or feel seen, and you've already made your point before you've argued anything. The audience proves it for you.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The scene-setting hook</div>
+        <div class="ex-text">"Picture a family having dinner together. The food is hot. The table is set. But nobody is talking. Mum is scrolling. Dad is checking emails. The kids are watching videos. They are in the same room &mdash; but they are completely alone."</div>
+        <div class="ex-why">Why it works: the audience can see it clearly in their minds. It's specific. It might even be their own family.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The personal hook (use your own story)</div>
+        <div class="ex-text">"I wrote a song called Screen Time. Not because someone told me to. But because I looked around and realised that the screens in our lives were slowly replacing the people in our lives. And I was tired of it."</div>
+        <div class="ex-why">Why it works: it's real, it's you, and it immediately tells the audience why they should listen to you specifically.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The surprising fact hook</div>
+        <div class="ex-text">"Did you know that the average person checks their phone over 150 times a day? That's once every ten minutes &mdash; including when they're with the people they love most."</div>
+        <div class="ex-why">Why it works: numbers shock people. It makes them think about their own habits before you've even made your argument.</div>
+      </div>
+    </div>
+
+    <hr class="ex-divider" />
+
+    <div class="ex-section">
+      <div class="ex-section-title"><span class="ex-word">Define</span> &mdash; Explain what isolation really means</div>
+      <div class="ex-section-desc">Most people think isolation means being completely alone with no one around. Your job is to redefine it. Isolation can happen even in a full room. This is the idea that makes your entire argument powerful &mdash; and different from what anyone expects.</div>
+
+      <div class="ex-card">
+        <div class="ex-label">The redefinition</div>
+        <div class="ex-text">"When most people hear the word <strong>isolated</strong>, they picture someone sitting alone in a dark room. But I want to talk about a different kind of isolation. The kind where you are surrounded by people &mdash; and still feel completely invisible."</div>
+        <div class="ex-why">Why it works: it surprises them. It opens up a bigger, more interesting argument than they expected.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The presence vs. connection contrast</div>
+        <div class="ex-text">"Being present and being <strong>connected</strong> are two very different things. Your body can be in the room. But if your mind is on a screen, you are not connected to the people right in front of you. That gap between presence and connection &mdash; that is isolation."</div>
+        <div class="ex-why">Why it works: the contrast is clean and memorable. "Presence vs. connection" is a phrase they'll carry with them after the presentation.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The simple, direct definition</div>
+        <div class="ex-text">"Isolation means feeling cut off &mdash; cut off from real conversations, cut off from the people who care about you, cut off from the world happening right outside your door. Technology hasn't made us less connected online. But it has made us more cut off from the people standing right beside us."</div>
+        <div class="ex-why">Why it works: short, clear, and it lands the core argument before the evidence even begins.</div>
+      </div>
+    </div>
+
+    <hr class="ex-divider" />
+
+    <div class="ex-section">
+      <div class="ex-section-title"><span class="ex-word">Evidence</span> &mdash; Build your case</div>
+      <div class="ex-section-desc">Evidence is where you prove your point. Use a mix: personal stories, observations, facts, and examples from your own life and song. You don't need 20 pieces of evidence. Three or four strong ones beat ten weak ones every time.</div>
+
+      <div class="ex-card">
+        <div class="ex-label">Family evidence &mdash; from your song</div>
+        <div class="ex-text">"In my song Screen Time, I sing about the simple things children are missing &mdash; playing outside, bedtime stories, running around with friends. These aren't big things. But they are the things that build a family. And they're disappearing &mdash; one scroll at a time."</div>
+        <div class="ex-why">Why it works: it connects directly to something you've already done, making you credible and passionate at the same time.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">Friendship evidence</div>
+        <div class="ex-text">"Think about how friendships have changed. We send heart emojis instead of giving real hugs. We post birthday wishes instead of showing up. We have hundreds of followers &mdash; and sometimes, not one real friend to call when something goes wrong."</div>
+        <div class="ex-why">Why it works: almost everyone in the audience has felt this, even if they've never said it out loud.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">Caribbean community evidence &mdash; your local angle</div>
+        <div class="ex-text">"Here in St. Kitts, we grew up in a culture where your neighbour was your family. Where children played in the streets until the sun went down. Where people sat on their galleries and talked. That culture is being replaced &mdash; by Wi-Fi, by data plans, by screens that keep us indoors and keep us quiet."</div>
+        <div class="ex-why">Why it works: it's local, it's emotional, and nobody else arguing this topic has this exact angle. This is yours.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">Mental health evidence</div>
+        <div class="ex-text">"Studies have found that teenagers who spend more time on social media are more likely to feel lonely, anxious, and left out &mdash; even though they're technically more 'connected' than any generation before them. More followers. More likes. More loneliness."</div>
+        <div class="ex-why">Why it works: the final three-word rhythm &mdash; "more followers, more likes, more loneliness" &mdash; is striking and easy to remember.</div>
+      </div>
+    </div>
+
+    <hr class="ex-divider" />
+
+    <div class="ex-section">
+      <div class="ex-section-title"><span class="ex-word">Rebut</span> &mdash; Tackle the other side</div>
+      <div class="ex-section-desc">A strong presenter doesn't ignore people who disagree &mdash; they address them and then push back. This shows maturity and makes your argument harder to knock down. The pattern is simple: "I hear you. You're right that... But here's why that's still not enough."</div>
+
+      <div class="ex-card">
+        <div class="ex-label">The "yes, but" rebut</div>
+        <div class="ex-text">"Now, I know what some of you might be thinking. Technology connects us too &mdash; we can video call relatives in another country, we can message friends in seconds. And you're right. Technology <strong>can</strong> connect us. But can a video call replace sitting in the same room as someone you love? Can a text message replace a real conversation? I don't think so."</div>
+        <div class="ex-why">Why it works: you give the other side credit, which makes you seem fair &mdash; and then you take it back with a question they can't argue with.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The quality vs. quantity rebut</div>
+        <div class="ex-text">"Yes, technology gives us more connections than ever before. But connection isn't just about quantity &mdash; how many people you know. It's about quality &mdash; how deeply you know them. And a screen will never give you the depth of a real, face-to-face relationship."</div>
+        <div class="ex-why">Why it works: the quantity/quality contrast is clean, memorable, and very hard to argue against.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The wrong-tool rebut</div>
+        <div class="ex-text">"Technology is wonderful for staying in touch across distances. But most of us aren't using it to call our grandparents overseas. We're using it to scroll past people we already see every day. We're using a long-distance tool &mdash; on people who are right beside us."</div>
+        <div class="ex-why">Why it works: it's a little funny, a little painful, and completely true. That combination is powerful.</div>
+      </div>
+    </div>
+
+    <hr class="ex-divider" />
+
+    <div class="ex-section">
+      <div class="ex-section-title"><span class="ex-word">Close</span> &mdash; Leave them with something</div>
+      <div class="ex-section-desc">The close is what they remember when they walk out of the room. It should feel like a conclusion but also like a challenge or an invitation. End with energy &mdash; not a trail-off. You want them to feel something, and you want them to want to do something.</div>
+
+      <div class="ex-card">
+        <div class="ex-label">The challenge close</div>
+        <div class="ex-text">"I have one challenge for you. Just one. Today &mdash; not next week, not someday &mdash; today, put down your phone for one hour. Sit with your family. Go outside. Talk to someone face to face. And see what happens. I promise you won't regret it."</div>
+        <div class="ex-why">Why it works: it's specific, it's doable, and it gives the audience something concrete to actually do. Words become action.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The callback close &mdash; ties back to your hook</div>
+        <div class="ex-text">"Remember that family I described at the beginning &mdash; sitting at a table, together but alone? I don't want that to be your family. I don't want that to be mine. We have a choice. And the choice starts with simply looking up."</div>
+        <div class="ex-why">Why it works: callbacks feel satisfying. It shows you planned the whole presentation. And "simply looking up" is quiet, poetic, and lands beautifully.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The personal close &mdash; your crown, your proof</div>
+        <div class="ex-text">"I am Adiaha. I am the Junior Calypso Monarch. And I didn't win that crown by scrolling through a screen. I won it by picking up a pen, writing something I believed in, and standing on a stage and saying it out loud. That is what happens when we put down the phones and pick up our lives. Thank you."</div>
+        <div class="ex-why">Why it works: it's powerful, personal, and it makes the crown part of the argument. Not just a title &mdash; living proof of what you're saying.</div>
+      </div>
+
+      <div class="ex-card">
+        <div class="ex-label">The quiet, emotional close</div>
+        <div class="ex-text">"The people who love you most are not on the other side of a screen. They are right here &mdash; in your house, in your classroom, on your street. Don't make them wait for you to notice them. Look up. Be here. While you still can."</div>
+        <div class="ex-why">Why it works: "while you still can" adds unexpected emotional weight. It's the kind of close that makes a room go quiet.</div>
+      </div>
+    </div>
+
+  </div><!-- end examples -->
+
+  <!-- RESEARCH PANE -->
+  <div id="pane-research" class="pane active">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill"></div></div>
+    <div class="progress-label" id="prog-label">0 of 12 questions answered</div>
+
+    <div class="section-label">Part 1 &mdash; The Hook &middot; Open with this</div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Opening question</span><span class="q-badge">Speak from experience</span></div>
+      <div class="q-text">When you look around at your family or friends, how often do you see them on their phones or tablets instead of talking to each other?</div>
+      <div class="q-hint">Think about meal times, car rides, or family gatherings. Use a personal example &mdash; maybe from your own home.</div>
+      <textarea class="q-answer" id="q1" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Define isolation</span><span class="q-badge">Set the argument up</span></div>
+      <div class="q-text">What does "being isolated" mean to you? Can someone be surrounded by people and still feel lonely?</div>
+      <div class="q-hint">Think about sitting next to someone who is on their phone the whole time. Are you really "together"?</div>
+      <textarea class="q-answer" id="q2" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="section-label">Part 2 &mdash; The Evidence &middot; Build your case</div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Family</span><span class="q-badge">Link to your song</span></div>
+      <div class="q-text">Think about your own song "Screen Time." What specific things do children miss out on when parents are always on their phones?</div>
+      <div class="q-hint">Playing games, bedtime stories, outdoor adventures, silly conversations &mdash; connect your song to real losses children experience.</div>
+      <textarea class="q-answer" id="q3" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Friendships</span><span class="q-badge">Social impact</span></div>
+      <div class="q-text">How has technology changed how children make and keep friends? Is texting or chatting online the same as actually playing together?</div>
+      <div class="q-hint">Think about the difference between sending a heart emoji and giving a real hug. What do we lose in digital friendships?</div>
+      <textarea class="q-answer" id="q4" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Mental Health</span><span class="q-badge">Health &amp; wellbeing</span></div>
+      <div class="q-text">What happens to how we feel when we spend too much time on screens? Name two or three feelings that come from too much screen time or social media.</div>
+      <div class="q-hint">Loneliness, anxiety, feeling left out, difficulty sleeping, comparing yourself to others &mdash; pick a few you can explain in your own words.</div>
+      <textarea class="q-answer" id="q5" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Community</span><span class="q-badge">Caribbean context</span></div>
+      <div class="q-text">In the Caribbean, we have a strong culture of community &mdash; neighbours helping each other, street games, village gatherings. Is technology replacing these traditions in St. Kitts?</div>
+      <div class="q-hint">This is your local angle &mdash; very powerful! Talk about what community used to look like and how screens have quietly changed it.</div>
+      <textarea class="q-answer" id="q6" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Statistics</span><span class="q-badge">Research to find</span></div>
+      <div class="q-text">Can you find one fact or statistic that shows how technology is increasing loneliness or reducing face-to-face time? Write the fact and where it comes from.</div>
+      <div class="q-hint">Search "screen time loneliness statistics" or "children social media mental health research." One strong fact is all you need.</div>
+      <textarea class="q-answer" id="q7" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Evidence &mdash; Personal Story</span><span class="q-badge">Make it real</span></div>
+      <div class="q-text">Share a short personal story &mdash; your own experience or something you witnessed &mdash; where a screen got in the way of a real human moment.</div>
+      <div class="q-hint">A dinner where everyone was on their phones. A friend who missed something because they were scrolling. A time you felt ignored for a device.</div>
+      <textarea class="q-answer" id="q8" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="section-label">Part 3 &mdash; The Rebut &middot; Address the other side</div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Counterargument</span><span class="q-badge">Acknowledge, then push back</span></div>
+      <div class="q-text">Some people say technology connects us &mdash; video calls, group chats, online communities. Why is that argument not enough to stop isolation from happening?</div>
+      <div class="q-hint">Acknowledge that technology has good uses, but argue that digital connection is different from real human presence. It's about quality, not just quantity.</div>
+      <textarea class="q-answer" id="q9" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="section-label">Part 4 &mdash; The Close &middot; Leave them with something</div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Solution</span><span class="q-badge">What can we do?</span></div>
+      <div class="q-text">If technology is making us isolated, what are three things people &mdash; especially families &mdash; can do right now to reconnect?</div>
+      <div class="q-hint">Draw from your Screen Time song &mdash; outdoor play, family time, setting limits. Make each one specific and easy to picture.</div>
+      <textarea class="q-answer" id="q10" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Closing statement</span><span class="q-badge">Memorable ending</span></div>
+      <div class="q-text">How will you end your presentation in a way that stays in the audience's mind? Write your closing two or three sentences.</div>
+      <div class="q-hint">A challenge, a callback to your hook, or a powerful image. Make it emotional and strong. End with confidence.</div>
+      <textarea class="q-answer" id="q11" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta"><span class="q-type">Credibility</span><span class="q-badge">Know your strength</span></div>
+      <div class="q-text">As the Junior Calypso Monarch who wrote and sang "Screen Time," what makes YOU a credible voice on this topic? Why should the audience believe you?</div>
+      <div class="q-hint">Your crown, your song, your school visits &mdash; you have lived this message. Remind them you are not just talking about it, you are doing something about it.</div>
+      <textarea class="q-answer" id="q12" placeholder="Write your answer here&hellip;" oninput="scheduleAutosave(); updateProgress()"></textarea>
+    </div>
+
+  </div><!-- end research -->
+
+  <!-- STRATEGY PANE -->
+  <div id="pane-strategy" class="pane">
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">The goal</span></h3>
+      <p>The goal is NOT to memorise word-for-word. That makes you sound robotic and panics you if you forget one sentence. The goal is to memorise the <strong>structure</strong> and a few key phrases, then speak naturally from what you know.</p>
+    </div>
+
+    <div class="section-label">The 5-Part Skeleton</div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Step 1</span>&nbsp; Learn these five words first</h3>
+      <p>Your whole presentation lives inside five words. Write them on your hand if you need to:</p>
+      <ol>
+        <li><strong>Hook</strong> &mdash; grab their attention with a question or scene</li>
+        <li><strong>Define</strong> &mdash; explain what isolation really means (presence &ne; connection)</li>
+        <li><strong>Evidence</strong> &mdash; family, friends, community, facts, your personal story</li>
+        <li><strong>Rebut</strong> &mdash; agree technology connects, then explain why it&rsquo;s still not enough</li>
+        <li><strong>Close</strong> &mdash; a challenge or call to action that sticks</li>
+      </ol>
+    </div>
+
+    <div class="section-label">Memory Techniques</div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Step 2</span>&nbsp; The hand technique</h3>
+      <p>Hold up your hand. Each finger = one section of your talk. When you practise, physically touch each finger as you move through the sections. If you get nervous on stage, glance at your hand &mdash; it tells you exactly where you are and what comes next. Your body becomes your notes.</p>
+    </div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Step 3</span>&nbsp; One vivid image per section</h3>
+      <p>Pick one picture in your mind for each section. Your brain remembers pictures better than words.</p>
+      <ul>
+        <li><strong>Hook:</strong> a family at dinner, food getting cold, everyone on their phones</li>
+        <li><strong>Define:</strong> a person in a crowded room, completely invisible and alone</li>
+        <li><strong>Evidence:</strong> your Screen Time song playing &mdash; let the lyrics remind you of the examples</li>
+        <li><strong>Rebut:</strong> a video call vs. a real hug &mdash; feel the difference</li>
+        <li><strong>Close:</strong> someone putting down their phone and picking up a friend&rsquo;s hand</li>
+      </ul>
+    </div>
+
+    <div class="section-label">Practice Plan</div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Step 4</span>&nbsp; Practise in three stages</h3>
+      <ol>
+        <li><strong>Day 1&ndash;2 (Read aloud):</strong> Read your written answers out loud three times each day. Do not try to memorise yet. Just get comfortable with how the ideas sound.</li>
+        <li><strong>Day 3&ndash;4 (Cover and try):</strong> Close the document. Try to say each section using only the five-word skeleton. It will be messy. That is perfectly fine &mdash; this is how memory forms.</li>
+        <li><strong>Day 5+ (Full run-throughs):</strong> Deliver the complete presentation to a mirror, to dad, or record yourself. Time yourself &mdash; aim for 4 to 6 minutes. Repeat until it feels natural, not perfect.</li>
+      </ol>
+    </div>
+
+    <div class="section-label">On the Day</div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Step 5</span>&nbsp; Handle nerves like a Calypso Queen</h3>
+      <ul>
+        <li>Take one slow, deep breath before you start. It signals your brain to calm down.</li>
+        <li>Speak slower than you think you need to &mdash; nerves make us rush.</li>
+        <li>If you forget something, pause, smile, and move to the next section. The audience will not know.</li>
+        <li>You have already performed on stage and won a crown. This is just a conversation with people who already believe in you.</li>
+      </ul>
+    </div>
+
+    <div class="strategy-card">
+      <h3><span class="phase-pill">Your personal edge</span></h3>
+      <p>Most people arguing this topic are just sharing facts. You have something they do not &mdash; you wrote a song about it, you performed it on a stage, you won with it, and you have visited schools to spread the message. Always remind your audience:</p>
+      <p style="margin-top:10px;padding:12px 16px;border-left:3px solid var(--gold);color:var(--text);font-style:italic;">&ldquo;I don&rsquo;t just believe this &mdash; I have been living this message.&rdquo;</p>
+    </div>
+
+  </div><!-- end strategy -->
+
+</div><!-- end container -->
+
+<!-- SETTINGS PANEL -->
+<div class="settings-overlay" id="overlay" onclick="closeSettings()"></div>
+<div class="settings-panel" id="settings-panel">
+  <div class="settings-title">Settings <button class="settings-close" onclick="closeSettings()">&#10005;</button></div>
+  <div class="field-group">
+    <label class="field-label">JSONBin Master API Key</label>
+    <input type="password" class="field-input" id="api-key" placeholder="$2a$10$&hellip;" />
+    <div class="field-hint">Your JSONBin master key. Stored in your browser only.</div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Bin ID</label>
+    <input type="text" class="field-input" id="bin-id" placeholder="Leave blank to create a new bin" />
+    <div class="field-hint">Once a bin is created, paste the ID here. Answers then persist across every device and session.</div>
+  </div>
+  <hr class="settings-divider" />
+  <button class="btn-settings-action primary" onclick="initBin()">Create new bin / Load existing bin</button>
+  <button class="btn-settings-action" onclick="saveConfig()">Save settings locally</button>
+  <div id="settings-status"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const JSONBIN = 'https://api.jsonbin.io/v3';
+const QS = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'];
+let autosaveTimer = null;
+let isSaving = false;
+
+function saveConfig() {
+  localStorage.setItem('adiaha_key', document.getElementById('api-key').value);
+  localStorage.setItem('adiaha_bin', document.getElementById('bin-id').value);
+  toast('Settings saved');
+}
+function loadConfig() {
+  const k = localStorage.getItem('adiaha_key');
+  const b = localStorage.getItem('adiaha_bin');
+  if (k) document.getElementById('api-key').value = k;
+  if (b) document.getElementById('bin-id').value = b;
+}
+function getKey() { return document.getElementById('api-key').value.trim(); }
+function getBin() { return document.getElementById('bin-id').value.trim(); }
+
+function openSettings() {
+  document.getElementById('settings-panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function updateProgress() {
+  const filled = QS.filter(q => (document.getElementById(q)||{}).value?.trim().length > 0).length;
+  document.getElementById('prog-fill').style.width = Math.round((filled/QS.length)*100) + '%';
+  document.getElementById('prog-label').textContent = filled + ' of ' + QS.length + ' questions answered';
+}
+
+function toast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.display = 'none', dur);
+}
+function setStatus(msg, cls='') {
+  const el = document.getElementById('settings-status');
+  el.textContent = msg; el.className = cls;
+}
+function setIndicator(msg) {
+  document.getElementById('autosave-indicator').textContent = msg;
+}
+
+function scheduleAutosave() {
+  clearTimeout(autosaveTimer);
+  setIndicator('typing\u2026');
+  autosaveTimer = setTimeout(doAutosave, 2000);
+}
+
+async function doAutosave() {
+  if (!getKey() || !getBin() || isSaving) return;
+  isSaving = true;
+  setIndicator('saving\u2026');
+  const data = {};
+  QS.forEach(q => { const el = document.getElementById(q); data[q] = el ? el.value : ''; });
+  try {
+    const r = await fetch(JSONBIN + '/b/' + getBin(), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': getKey() },
+      body: JSON.stringify(data)
+    });
+    setIndicator(r.ok ? 'saved \u2713' : 'error');
+  } catch(e) {
+    setIndicator('offline');
+  }
+  setTimeout(() => setIndicator(''), 3000);
+  isSaving = false;
+}
+
+async function initBin() {
+  const key = getKey();
+  if (!key) { setStatus('Please paste your master API key first.', 'err'); return; }
+  const binId = getBin();
+  if (binId) {
+    setStatus('Loading answers\u2026');
+    try {
+      const r = await fetch(JSONBIN + '/b/' + binId + '/latest', { headers: { 'X-Master-Key': key } });
+      const d = await r.json();
+      if (!r.ok) { setStatus('Error: ' + (d.message || r.status), 'err'); return; }
+      const rec = d.record || {};
+      QS.forEach(q => { const el = document.getElementById(q); if (el && rec[q]) el.value = rec[q]; });
+      updateProgress();
+      saveConfig();
+      setStatus('Answers loaded from bin ' + binId, 'ok');
+      toast('Answers loaded');
+    } catch(e) { setStatus('Network error: ' + e.message, 'err'); }
+    return;
+  }
+  setStatus('Creating new bin\u2026');
+  try {
+    const r = await fetch(JSONBIN + '/b', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'Adiaha Presentation Answers', 'X-Bin-Private': 'true' },
+      body: JSON.stringify({})
+    });
+    const d = await r.json();
+    if (!r.ok) { setStatus('Error: ' + (d.message || r.status), 'err'); return; }
+    const id = d.metadata?.id;
+    if (!id) { setStatus('Unexpected response.', 'err'); return; }
+    document.getElementById('bin-id').value = id;
+    saveConfig();
+    setStatus('Bin created!\nID: ' + id + '\n\nSaved. Answers will now auto-save as she types.', 'ok');
+    toast('Bin created: ' + id, 4000);
+  } catch(e) { setStatus('Network error: ' + e.message, 'err'); }
+}
+
+loadConfig();
+updateProgress();
+</script>
+</body>
+</html>
