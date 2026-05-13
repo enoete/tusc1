@@ -93,7 +93,6 @@
   <div class="topbar-title">Adiaha's Research Guide <span>Technology has made us isolated</span></div>
   <div class="topbar-right">
     <div class="autosave-indicator" id="autosave-indicator"></div>
-    <button class="btn-icon" onclick="openSettings()">&#9881; Settings</button>
   </div>
 </div>
 
@@ -456,11 +455,22 @@ function saveConfig() {
   localStorage.setItem('adiaha_key', document.getElementById('api-key').value);
   toast('Settings saved');
 }
+async function autoLoad() {
+  try {
+    const r = await fetch(JSONBIN + '/b/' + getBin() + '/latest', { headers: { 'X-Master-Key': getKey() } });
+    const d = await r.json();
+    if (!r.ok) return;
+    const rec = d.record || {};
+    QS.forEach(q => { const el = document.getElementById(q); if (el && rec[q]) el.value = rec[q]; });
+    updateProgress();
+  } catch(e) {}
+}
+
 function loadConfig() {
   const k = localStorage.getItem('adiaha_key');
   if (k) document.getElementById('api-key').value = k;
 }
-function getKey() { return document.getElementById('api-key').value.trim(); }
+function getKey() { return '$2a$10$YdbExlb2BaD00NW/hIKjcOXwJR/0mx3D/.vsZ62yW6gUFVqNlUQyO'; }
 function getBin() { return '6a04ff03250b1311c347f13f'; }
 
 function openSettings() {
@@ -545,6 +555,7 @@ async function initBin() {
 
 loadConfig();
 updateProgress();
+autoLoad();
 </script>
 </body>
 </html>
