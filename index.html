@@ -510,7 +510,7 @@ function setIndicator(msg) {
 
 function scheduleAutosave() {
   clearTimeout(autosaveTimer);
-  setIndicator('typing\u2026');
+  if (getKey() && getBin()) setIndicator('typing\u2026');
   autosaveTimer = setTimeout(doAutosave, 2000);
 }
 
@@ -557,8 +557,8 @@ async function initBin() {
   try {
     const r = await fetch(JSONBIN + '/b', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'Adiaha Presentation Answers', 'X-Bin-Private': 'true' },
-      body: JSON.stringify({})
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'Adiaha Presentation Answers' },
+      body: JSON.stringify({ initialized: true, q1:'', q2:'', q3:'', q4:'', q5:'', q6:'', q7:'', q8:'', q9:'', q10:'', q11:'', q12:'' })
     });
     const d = await r.json();
     if (!r.ok) { setStatus('Error: ' + (d.message || r.status), 'err'); return; }
