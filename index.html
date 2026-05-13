@@ -438,13 +438,8 @@
     <input type="password" class="field-input" id="api-key" placeholder="$2a$10$&hellip;" />
     <div class="field-hint">Your JSONBin master key. Stored in your browser only.</div>
   </div>
-  <div class="field-group">
-    <label class="field-label">Bin ID</label>
-    <input type="text" class="field-input" id="bin-id" placeholder="Leave blank to create a new bin" />
-    <div class="field-hint">Once a bin is created, paste the ID here. Answers then persist across every device and session.</div>
-  </div>
   <hr class="settings-divider" />
-  <button class="btn-settings-action primary" onclick="initBin()">Create new bin / Load existing bin</button>
+  <button class="btn-settings-action primary" onclick="initBin()">Load my saved answers</button>
   <button class="btn-settings-action" onclick="saveConfig()">Save settings locally</button>
   <div id="settings-status"></div>
 </div>
@@ -459,17 +454,14 @@ let isSaving = false;
 
 function saveConfig() {
   localStorage.setItem('adiaha_key', document.getElementById('api-key').value);
-  localStorage.setItem('adiaha_bin', document.getElementById('bin-id').value);
   toast('Settings saved');
 }
 function loadConfig() {
   const k = localStorage.getItem('adiaha_key');
-  const b = localStorage.getItem('adiaha_bin');
   if (k) document.getElementById('api-key').value = k;
-  if (b) document.getElementById('bin-id').value = b;
 }
 function getKey() { return document.getElementById('api-key').value.trim(); }
-function getBin() { return document.getElementById('bin-id').value.trim(); }
+function getBin() { return '6a04ff03250b1311c347f13f'; }
 
 function openSettings() {
   document.getElementById('settings-panel').classList.add('open');
@@ -537,37 +529,17 @@ async function doAutosave() {
 async function initBin() {
   const key = getKey();
   if (!key) { setStatus('Please paste your master API key first.', 'err'); return; }
-  const binId = getBin();
-  if (binId) {
-    setStatus('Loading answers\u2026');
-    try {
-      const r = await fetch(JSONBIN + '/b/' + binId + '/latest', { headers: { 'X-Master-Key': key } });
-      const d = await r.json();
-      if (!r.ok) { setStatus('Error: ' + (d.message || r.status), 'err'); return; }
-      const rec = d.record || {};
-      QS.forEach(q => { const el = document.getElementById(q); if (el && rec[q]) el.value = rec[q]; });
-      updateProgress();
-      saveConfig();
-      setStatus('Answers loaded from bin ' + binId, 'ok');
-      toast('Answers loaded');
-    } catch(e) { setStatus('Network error: ' + e.message, 'err'); }
-    return;
-  }
-  setStatus('Creating new bin\u2026');
+  setStatus('Loading answers\u2026');
   try {
-    const r = await fetch(JSONBIN + '/b', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'Adiaha Presentation Answers' },
-      body: JSON.stringify({ initialized: true, q1:'', q2:'', q3:'', q4:'', q5:'', q6:'', q7:'', q8:'', q9:'', q10:'', q11:'', q12:'' })
-    });
+    const r = await fetch(JSONBIN + '/b/' + getBin() + '/latest', { headers: { 'X-Master-Key': key } });
     const d = await r.json();
     if (!r.ok) { setStatus('Error: ' + (d.message || r.status), 'err'); return; }
-    const id = d.metadata?.id;
-    if (!id) { setStatus('Unexpected response.', 'err'); return; }
-    document.getElementById('bin-id').value = id;
+    const rec = d.record || {};
+    QS.forEach(q => { const el = document.getElementById(q); if (el && rec[q]) el.value = rec[q]; });
+    updateProgress();
     saveConfig();
-    setStatus('Bin created!\nID: ' + id + '\n\nSaved. Answers will now auto-save as she types.', 'ok');
-    toast('Bin created: ' + id, 4000);
+    setStatus('Answers loaded successfully.', 'ok');
+    toast('Answers loaded');
   } catch(e) { setStatus('Network error: ' + e.message, 'err'); }
 }
 
